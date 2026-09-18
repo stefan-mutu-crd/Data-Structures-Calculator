@@ -5,10 +5,18 @@ import java.util.regex.Pattern;
 public class Utils {
 
     public static Stack<String> convertStringToStack(String expression) {
+
+        if (expression == null || expression.isBlank()) {
+            throw new RuntimeException("Expression can not be null or empty.");
+        }
+
+        if (expression.length() == 1 && !isDigit(expression)) {
+            throw new RuntimeException("Expression needs to contain at least one number.");
+        }
+
         Stack<String> expressionStack = new Stack<>();
 
         for (int i = 0; i < expression.length(); i++) {
-
             String nextValue = String.valueOf(expression.charAt(i));
 
             if (!(isArithmeticOperation(nextValue) || isDigit(nextValue))) {
@@ -16,33 +24,40 @@ public class Utils {
             }
 
             if (!expressionStack.isEmpty()) {
-
+                if (isDigit(nextValue)) {
+                    if (expressionStack.peek().equals("0")) {
+                        throw new RuntimeException("A multiple digit number can't start with 0.");
+                    }
+                    if (isNumber(expressionStack.peek()) && !expressionStack.peek().equals("0")) {
+                        expressionStack.push(expressionStack.pop() + nextValue);
+                    }
+                } else {
+                    if (!(isNumber(expressionStack.peek()) || expressionStack.peek().equals("0"))) {
+                        throw new RuntimeException("There can't be multiple arithmetic operations in row");
+                    }
+                    if (i == expression.length() - 1) {
+                        throw new RuntimeException("Expression can't end with a arithmetic symbol");
+                    }
+                }
                 if (isDigit(nextValue) && isNumber(expressionStack.peek()) && !expressionStack.peek().equals("0")) {
                     expressionStack.push(expressionStack.pop() + nextValue);
-                } else if (isArithmeticOperation(nextValue) && !(isNumber(expressionStack.peek())  || expressionStack.peek().equals("0")) ) {
-                    throw new RuntimeException("There can't be multiple arithmetic operations in row");
                 } else {
                     expressionStack.push(nextValue);
                 }
-
             } else {
-                // Inserting of first element, it can
                 if (isDigit(nextValue)) {
                     expressionStack.push(nextValue);
                 } else {
                     if (nextValue.equals("-")) {
                         expressionStack.push("-");
                     } else {
-                        throw new RuntimeException("Invalid expression: first character can be only a positive or negative number");
+                        throw new RuntimeException("Invalid expression: first character can be only a digit or '-' ");
                     }
                 }
-
             }
-
         }
         return expressionStack;
     }
-
 
     public static boolean isDigit(String val) {
         return List.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").contains(val);
