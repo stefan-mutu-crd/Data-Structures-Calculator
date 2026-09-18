@@ -28,9 +28,6 @@ public class Utils {
                     if (expressionStack.peek().equals("0")) {
                         throw new RuntimeException("A multiple digit number can't start with 0.");
                     }
-                    if (isNumber(expressionStack.peek()) && !expressionStack.peek().equals("0")) {
-                        expressionStack.push(expressionStack.pop() + nextValue);
-                    }
                 } else {
                     if (!(isNumber(expressionStack.peek()) || expressionStack.peek().equals("0"))) {
                         throw new RuntimeException("There can't be multiple arithmetic operations in row");
