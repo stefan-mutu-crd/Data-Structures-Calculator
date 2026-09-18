@@ -4,6 +4,32 @@ import java.util.regex.Pattern;
 
 public class Utils {
 
+    public static int stackCalculation(Stack<String> stack) {
+
+        int sum = 0;
+        String nextValue = stack.pop();
+
+        if (nextValue.equals("-")) {
+//            stack.pop(); // here
+            sum = -(Integer.parseInt(stack.pop()));
+        } else {
+            sum = Integer.parseInt(nextValue);
+        }
+
+        while (!stack.isEmpty()) {
+            nextValue = stack.pop();
+            switch (nextValue) {
+                case "+":
+                    sum += Integer.parseInt(stack.peek());
+                    break;
+                case "-":
+                    sum -= Integer.parseInt(stack.peek());
+                    break;
+            }
+        }
+        return sum;
+    }
+
     public static Stack<String> convertStringToStack(String expression) {
 
         if (expression == null || expression.isBlank()) {
